@@ -1,0 +1,50 @@
+{
+  "name": "threejs-node-engine",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenGL Three.js on Node.js — engine core + examples",
+  "scripts": {
+    "start": "node src/cube.js",
+    "cube": "node src/cube.js",
+    "controls": "node src/controls.js",
+    "visible": "node src/visible.js",
+    "texture": "node src/texture.js",
+    "materials": "node src/materials.js",
+    "audio": "node src/audio.js",
+    "duplicate": "node src/duplicate.js",
+    "push": "node src/push.js",
+    "sprite": "node src/sprite.js",
+    "sprite-tile": "node src/sprite-tile.js",
+    "sprite2d": "node src/sprite2d.js",
+    "text": "node src/text.js",
+    "text2d": "node src/text2d.js",
+    "prompt": "node src/prompt.js",
+    "collision": "node src/collision.js",
+    "scale": "node src/scale.js",
+    "scale2d": "node src/scale2d.js",
+    "heightmap": "node src/heightmap.js",
+    "tile3d": "node src/tile3d.js",
+    "background": "node src/background.js",
+    "bitmap": "node src/bitmap.js",
+    "gltf": "node src/gltf.js",
+    "loading": "node src/loading.js",
+    "shader": "node src/shader.js",
+    "fullscreen": "node src/fullscreen.js",
+    "raw:cube": "node src/raw/cube.js",
+    "raw:char": "node src/raw/char.js",
+    "raw:heightmap": "node src/raw/heightmap.js",
+    "raw:tilemap": "node src/raw/tilemap.js",
+    "char": "node src/raw/char.js",
+    "tilemap": "node src/raw/tilemap.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@kmamal/gl": "^9.1.0",
+    "@kmamal/sdl": "^0.11.13",
+    "@napi-rs/canvas": "^1.0.3",
+    "three": "0.162.0"
+  }
+}
