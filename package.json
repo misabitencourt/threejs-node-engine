@@ -1,10 +1,28 @@
 {
   "name": "threejs-node-engine",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
   "description": "OpenGL Three.js on Node.js — engine core + examples",
+  "main": "./lib/engine.js",
+  "types": "./dist/engine.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/engine.d.ts",
+      "import": "./lib/engine.js",
+      "default": "./lib/engine.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "dist",
+    "README.md"
+  ],
   "scripts": {
+    "build": "npm run build:types",
+    "build:types": "tsc -p tsconfig.json",
+    "prepare": "npm run build:types",
+    "prepublishOnly": "npm run build:types",
     "start": "node src/cube.js",
     "cube": "node src/cube.js",
     "controls": "node src/controls.js",
@@ -41,10 +59,23 @@
   "engines": {
     "node": ">=18"
   },
+  "keywords": [
+    "three.js",
+    "three",
+    "opengl",
+    "webgl",
+    "nodejs",
+    "game-engine",
+    "sdl"
+  ],
   "dependencies": {
     "@kmamal/gl": "^9.1.0",
     "@kmamal/sdl": "^0.11.13",
     "@napi-rs/canvas": "^1.0.3",
     "three": "0.162.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
   }
 }
