@@ -16,9 +16,12 @@
   "files": [
     "lib",
     "dist",
+    "prebuilds",
+    "scripts",
     "README.md"
   ],
   "scripts": {
+    "postinstall": "node scripts/ensure-gl.mjs",
     "build": "npm run build:types",
     "build:types": "tsc -p tsconfig.json",
     "prepare": "npm run build:types",
@@ -37,6 +40,8 @@
     "sprite2d": "node src/sprite2d.js",
     "text": "node src/text.js",
     "text2d": "node src/text2d.js",
+    "zindex": "node src/zindex.js",
+    "opacity": "node src/opacity.js",
     "prompt": "node src/prompt.js",
     "collision": "node src/collision.js",
     "scale": "node src/scale.js",
@@ -69,10 +74,12 @@
     "sdl"
   ],
   "dependencies": {
-    "@kmamal/gl": "^9.1.0",
     "@kmamal/sdl": "^0.11.13",
     "@napi-rs/canvas": "^1.0.3",
     "three": "0.162.0"
+  },
+  "optionalDependencies": {
+    "@kmamal/gl": "^9.1.0"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

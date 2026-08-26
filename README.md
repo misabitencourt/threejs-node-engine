@@ -19,6 +19,16 @@ src/raw/                 Original hand-written examples
 assets/
 ```
 
+## Install
+
+```bash
+npm install
+```
+
+Linux and Windows use stock `@kmamal/gl` (official prebuild, or its source fallback). macOS on Node 18–23 does the same.
+
+macOS **Node 24** has no official `@kmamal/gl` binary (ABI 137). `@kmamal/gl` is an optional dependency so that failed install does not abort this package; `postinstall` then drops a Darwin **arm64** `webgl.node` from `prebuilds/`. Intel Macs on Node 24 should use Node 20 or 22 until a `prebuilds/darwin-x64-137` binary is added.
+
 ## Engine examples
 
 ```bash
@@ -36,6 +46,8 @@ npm run sprite-tile # char sprite on 3dtile map + music by distance
 npm run sprite2d   # 2dimagesprite walk on screen pixels (char.png)
 npm run text       # extruded 3D text (FontLoader + TextGeometry)
 npm run text2d     # camera-fixed 2D HUD text (Sprite + canvas)
+npm run zindex     # HUD stack: sprite, rectangle, text (zIndex)
+npm run opacity    # HUD opacity: sprite behind 0.5 rectangle
 npm run prompt     # name prompt UI (2dtext input + OK/Cancel)
 npm run collision  # drive a cube; solid sphere/box/cylinder/cone
 npm run scale      # cube; hold F scale up, Q scale down
@@ -96,6 +108,8 @@ engine.create({
 | `lights` | Ambient / directional / hemisphere |
 | `elements[]` | Scene content: **`background`**, **`geometry`**, **`heightmap`**, **`3dtile`**, **`gltf`/`glb`**, **`3dimagesprite`**, **`2dimagesprite`**, **`2dbitmap`**, **`text`**, **`2dtext`**. Spawn more later with `addElement(def)` (see `npm run loading`) |
 | `elements[].visible` | Default `true`; if `false`, element is not rendered |
+| `elements[].zIndex` | HUD stack for `2dtext` / `2dimagesprite` / `2dbitmap` (higher = in front). Defaults: bitmap `0`, sprite `1`, text `2` |
+| `elements[].opacity` | HUD alpha for `2dtext` / `2dimagesprite` / `2dbitmap` (`0`..`1`, default `1`) |
 | `elements[].texture` | `{ color\|raw?, image?, imageFill?, repeat? }` |
 | `elements[].shader` | Shortcut for `material: { type: 'shader', ... }` on 3D meshes |
 | `elements[].pushForce` | `undefined` or `[x,y,z]` / `{x,y,z}` — continuous push (units/s); **not** on `2dtext` / `2dimagesprite` / `2dbitmap` |
@@ -280,7 +294,7 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
 // runtime: element.setText('New label')
 ```
 
-**`2dtext`** — camera-fixed HUD label (Three.js `Sprite` + canvas texture). Parent is the main camera, so it stays on screen while the world moves. **2D position only** — no 3D vector, no `pushForce`. Coordinates are **screen pixels** (Cartesian): origin top-left, `x` right, `y` down — the engine converts them to camera space.
+**`2dtext`** — camera-fixed HUD label (Three.js `Sprite` + canvas texture). Parent is the main camera, so it stays on screen while the world moves. **2D position only** — no 3D vector, no `pushForce`. Coordinates are **screen pixels** (Cartesian): origin top-left, `x` right, `y` down — the engine converts them to camera space. **`zIndex`** stacks HUD layers (higher draws in front; default `2`).
 
 ```js
 {
@@ -289,12 +303,15 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
   position: [24, 20],    // screen px from top-left (not scene floats)
   fontSize: 40,
   color: '#7ee787',
+  zIndex: 2,
+  opacity: 1,
   visible: true,
 }
-// runtime: element.setText('Score: 1'), element.position = [x, y], element.visible = false
+// runtime: element.setText('Score: 1'), element.position = [x, y],
+//          element.zIndex = 4, element.opacity = 0.5, element.visible = false
 ```
 
-**`2dbitmap` / `bitmap`** — camera-fixed pixel buffer (HUD). You build a color array and it draws in **screen pixels** (same Cartesian model as `2dtext`: origin top-left, `x` right, `y` down). No world transform / `pushForce`.
+**`2dbitmap` / `bitmap`** — camera-fixed pixel buffer (HUD). You build a color array and it draws in **screen pixels** (same Cartesian model as `2dtext`: origin top-left, `x` right, `y` down). No world transform / `pushForce`. **`zIndex`** default `0` (behind sprites and text unless raised).
 
 ```js
 {
@@ -306,14 +323,16 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
   fill: 0x1b4332,          // used when pixels omitted
   position: [784, 16],     // screen px from top-left
   pixelScale: 8,           // or size: [128, 128]
+  zIndex: 0,
+  opacity: 1,
 }
 // runtime: element.setPixel(x, y, 0x4f8cff), .fill(color),
-//          .setPixels(arr), .pixels, .position, .size, .visible
+//          .setPixels(arr), .pixels, .position, .size, .zIndex, .opacity, .visible
 // helper:  const bmp = engine.createBitmap({ width: 16, height: 16 })
 //          { type: '2dbitmap', bitmap: bmp, position: [784, 16], pixelScale: 8 }
 ```
 
-**`2dimagesprite`** — camera-fixed PNG (same sheet/crop API as `3dimagesprite`, but HUD). Composes shared sheet + screen helpers — same Cartesian pixel `position` as `2dtext`. No world transform / `pushForce`.
+**`2dimagesprite`** — camera-fixed PNG (same sheet/crop API as `3dimagesprite`, but HUD). Composes shared sheet + screen helpers — same Cartesian pixel `position` as `2dtext`. No world transform / `pushForce`. **`zIndex`** default `1`.
 
 ```js
 {
@@ -322,10 +341,17 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
   position: [120, 280],  // screen px (top-left origin, y down)
   pixelScale: 4,         // or size: [w, h] in screen px
   crop: { x: 48, y: 0, w: 24, h: 17 },
+  zIndex: 1,
+  opacity: 1,
   visible: true,
 }
-// runtime: element.position = [x, y], element.setFrame(i, fw, fh), element.visible
+// runtime: element.position = [x, y], element.setFrame(i, fw, fh),
+//          element.zIndex, element.opacity, element.visible
 ```
+
+HUD **`zIndex`** (CSS-like): higher draws in front. Defaults keep the old stack — `2dbitmap` `0`, `2dimagesprite` `1`, `2dtext` `2`. Runtime: `element.zIndex = n`. See `npm run zindex`.
+
+HUD **`opacity`**: `0`..`1` (default `1`) on the same 2D types. Runtime: `element.opacity = 0.5`. See `npm run opacity`.
 
 ## Raw examples
 
@@ -343,5 +369,5 @@ Aliases `npm run char|tilemap` still work. Engine terrain demo: `npm run heightm
 | Package | Role |
 | ------- | ---- |
 | `@kmamal/sdl` | Native window |
-| `@kmamal/gl` | WebGL1 / OpenGL context |
+| `@kmamal/gl` | WebGL1 / OpenGL context (optional dep; macOS Node 24 uses `prebuilds/`) |
 | `three@0.162` | Scene API (WebGL1-compatible) |
