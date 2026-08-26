@@ -1,6 +1,6 @@
 {
   "name": "threejs-node-engine",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "OpenGL Three.js on Node.js — engine core + examples",
   "main": "./lib/engine.js",
