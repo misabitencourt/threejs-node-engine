@@ -48,6 +48,7 @@ npm run text       # extruded 3D text (FontLoader + TextGeometry)
 npm run text2d     # camera-fixed 2D HUD text (Sprite + canvas)
 npm run zindex     # HUD stack: sprite, rectangle, text (zIndex)
 npm run opacity    # HUD opacity: sprite behind 0.5 rectangle
+npm run mirror2d   # 2dimagesprite mirrorX / mirrorY (flip in place)
 npm run prompt     # name prompt UI (2dtext input + OK/Cancel)
 npm run collision  # drive a cube; solid sphere/box/cylinder/cone
 npm run scale      # cube; hold F scale up, Q scale down
@@ -110,6 +111,7 @@ engine.create({
 | `elements[].visible` | Default `true`; if `false`, element is not rendered |
 | `elements[].zIndex` | HUD stack for `2dtext` / `2dimagesprite` / `2dbitmap` (higher = in front). Defaults: bitmap `0`, sprite `1`, text `2` |
 | `elements[].opacity` | HUD alpha for `2dtext` / `2dimagesprite` / `2dbitmap` (`0`..`1`, default `1`) |
+| `elements[].mirrorX` / `mirrorY` | Flip HUD `2dtext` / `2dimagesprite` / `2dbitmap` on that axis. Screen box and `position` stay put. Default `false` |
 | `elements[].texture` | `{ color\|raw?, image?, imageFill?, repeat? }` |
 | `elements[].shader` | Shortcut for `material: { type: 'shader', ... }` on 3D meshes |
 | `elements[].pushForce` | `undefined` or `[x,y,z]` / `{x,y,z}` — continuous push (units/s); **not** on `2dtext` / `2dimagesprite` / `2dbitmap` |
@@ -305,10 +307,13 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
   color: '#7ee787',
   zIndex: 2,
   opacity: 1,
+  mirrorX: false,
+  mirrorY: false,
   visible: true,
 }
 // runtime: element.setText('Score: 1'), element.position = [x, y],
-//          element.zIndex = 4, element.opacity = 0.5, element.visible = false
+//          element.zIndex = 4, element.opacity = 0.5,
+//          element.mirrorX = true, element.mirrorY = true, element.visible = false
 ```
 
 **`2dbitmap` / `bitmap`** — camera-fixed pixel buffer (HUD). You build a color array and it draws in **screen pixels** (same Cartesian model as `2dtext`: origin top-left, `x` right, `y` down). No world transform / `pushForce`. **`zIndex`** default `0` (behind sprites and text unless raised).
@@ -325,9 +330,12 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
   pixelScale: 8,           // or size: [128, 128]
   zIndex: 0,
   opacity: 1,
+  mirrorX: false,
+  mirrorY: false,
 }
 // runtime: element.setPixel(x, y, 0x4f8cff), .fill(color),
-//          .setPixels(arr), .pixels, .position, .size, .zIndex, .opacity, .visible
+//          .setPixels(arr), .pixels, .position, .size, .zIndex, .opacity,
+//          .mirrorX, .mirrorY, .visible
 // helper:  const bmp = engine.createBitmap({ width: 16, height: 16 })
 //          { type: '2dbitmap', bitmap: bmp, position: [784, 16], pixelScale: 8 }
 ```
@@ -343,15 +351,19 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
   crop: { x: 48, y: 0, w: 24, h: 17 },
   zIndex: 1,
   opacity: 1,
+  mirrorX: false,
+  mirrorY: false,
   visible: true,
 }
 // runtime: element.position = [x, y], element.setFrame(i, fw, fh),
-//          element.zIndex, element.opacity, element.visible
+//          element.zIndex, element.opacity, element.mirrorX, element.mirrorY, element.visible
 ```
 
 HUD **`zIndex`** (CSS-like): higher draws in front. Defaults keep the old stack — `2dbitmap` `0`, `2dimagesprite` `1`, `2dtext` `2`. Runtime: `element.zIndex = n`. See `npm run zindex`.
 
 HUD **`opacity`**: `0`..`1` (default `1`) on the same 2D types. Runtime: `element.opacity = 0.5`. See `npm run opacity`.
+
+HUD **`mirrorX` / `mirrorY`**: flip the image in place (`false` by default). The screen rect and `position` do not move. Runtime: `element.mirrorX = true`. See `npm run mirror2d`.
 
 ## Raw examples
 

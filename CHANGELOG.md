@@ -5,6 +5,18 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.2.0] - 2026-08-27
+
+HUD 2D mirror (`mirrorX` / `mirrorY`).
+
+### Added
+
+- `mirrorX` and `mirrorY` on HUD elements (`2dtext`, `2dimagesprite`, `2dbitmap`). Flips the image in place; screen `position` / size stay put. Runtime: `element.mirrorX` / `element.mirrorY`.
+- Shared HUD helpers in `lib/objects/hudScreen.js` (`bindMirror`, `attachHudMirrorUniforms`, `resolveBool`). UV flip in the sprite shader because `THREE.Sprite` ignores negative scale.
+- Example: `npm run mirror2d` (four `2dimagesprite` copies: original, X, Y, both).
+
 ## [1.1.0] - 2026-08-25
 
 macOS install/runtime fixes and HUD 2D API improvements.
