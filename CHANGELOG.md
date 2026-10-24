@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `2dtext` Latin-1 glyphs (`ação`, `São`, `café`, `niño`) rendered as missing-glyph boxes. CSS generic `sans-serif` is not a Skia family; the engine now maps it to an installed Latin-capable face (Arial, Helvetica, Liberation Sans, …).
+
 ## [1.2.0] - 2026-08-27
 
 HUD 2D mirror (`mirrorX` / `mirrorY`).

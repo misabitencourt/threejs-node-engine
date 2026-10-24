@@ -305,6 +305,7 @@ Geometry kinds: `box`, `sphere`, `plane`, `cylinder`, `cone`.
   position: [24, 20],    // screen px from top-left (not scene floats)
   fontSize: 40,
   color: '#7ee787',
+  fontFamily: 'sans-serif', // resolved to Arial / Helvetica / Liberation Sans / …
   zIndex: 2,
   opacity: 1,
   mirrorX: false,
